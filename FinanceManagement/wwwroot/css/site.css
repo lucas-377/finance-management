@@ -1,4 +1,68 @@
-﻿/* Base */
+﻿/*----------------------------------
+    Base
+----------------------------------*/
 html {scroll-behavior: smooth; height: 100%;}
 body {height: 100%; display: flex; flex-direction: column;}
 footer {margin-top: auto;}
+
+/*----------------------------------
+    Home
+----------------------------------*/
+/* Banner */
+#homeCarousel .carousel-caption {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    bottom: unset !important;
+    bottom: 20px;
+    z-index: 10;
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: center;
+    text-shadow: 1px 3px 20px #000000ab;
+}
+
+#homeCarousel .carousel-caption h5 {
+    font-size: 60px;
+}
+
+/*----------------------------------
+    Global
+----------------------------------*/
+/* Inner Banner */
+.banner--inner {
+    position: relative;
+    margin-bottom: 50px;
+}
+
+.banner--inner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #00000061;
+}
+
+.banner-caption {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    width: 100%;
+    color: #fff;
+    z-index: 1;
+}
+
+.banner-caption h5 {
+    font-size: 60px;
+}
+
+/* Button with icon */
+.btn-icon {width: 50px;}
+
+/* Table row aligned center */
+.table td, .table th {
+     vertical-align: middle;
+}

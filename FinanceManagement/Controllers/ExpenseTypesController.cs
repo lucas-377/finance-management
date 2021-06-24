@@ -98,13 +98,13 @@ namespace FinanceManagement.Controllers
 
         // POST: ExpenseTypes/Delete/5
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<JsonResult> Delete(int id)
         {
             var expenseType = await _context.ExpenseTypes.FindAsync(id);
             TempData["Confirmation"] = expenseType.Name + " was deleted.";
             _context.ExpenseTypes.Remove(expenseType);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Json(expenseType.Name + "deleted!");
         }
 
         private bool ExpenseTypeExists(int id)

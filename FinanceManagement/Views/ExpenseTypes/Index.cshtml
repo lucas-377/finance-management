@@ -4,32 +4,97 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<div class="banner--inner">
+    <img src="https://source.unsplash.com/NeTPASr-bmQ/1920x300" alt="Banner" />
+    <div class="banner-caption">
+        <h5>Expense Types</h5>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ExpenseTypeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ExpenseTypeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ExpenseTypeId">Delete</a>
-            </td>
-        </tr>
+<div class="table">
+    <div class="container">
+        <p>
+            <a asp-action="Create" class="btn btn-outline-dark">Create New</a>
+        </p>
+
+        <hr />
+
+        @if (TempData["Confirmation"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>@TempData["Confirmation"]</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
+        <table class="table table-hover table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        Options
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ExpenseTypeId" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                            <a href="javascript:void(0);" onclick="showModal(@item.ExpenseTypeId, '@item.Name');" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal modalDelete" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <span class="item-name"></span> ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger btn-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+    <script>
+        function showModal(id, name) {
+            $('.item-name').text(name);
+            $('.modalDelete').modal('show');
+
+            $('.btn-delete').on('click', function () {
+                $.ajax({
+                    url: 'ExpenseTypes/Delete',
+                    method: 'POST',
+                    data: { id: id },
+                    success: function (data) {
+                        $('.modalDelete').modal('hide');
+                        location.reload(true);
+                    }
+                });
+            });
+        }
+    </script>
 }
-    </tbody>
-</table>
