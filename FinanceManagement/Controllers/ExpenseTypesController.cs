@@ -15,9 +15,20 @@ namespace FinanceManagement.Controllers
             _context = context;
         }
 
-        // GET: ExpenseTypes
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
+            return View(await _context.ExpenseTypes.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(string searchTxt)
+        {
+            if (!string.IsNullOrEmpty(searchTxt))
+            {
+                return View(await _context.ExpenseTypes.Where(et => et.Name.ToUpper().Contains(searchTxt.ToUpper())).ToListAsync());
+            }
+
             return View(await _context.ExpenseTypes.ToListAsync());
         }
 

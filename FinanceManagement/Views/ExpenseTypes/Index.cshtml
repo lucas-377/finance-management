@@ -13,9 +13,24 @@
 
 <div class="table">
     <div class="container">
-        <p>
-            <a asp-action="Create" class="btn btn-outline-dark">Create New</a>
-        </p>
+        <div class="row">
+            <div class="col col-md-6">
+                <a asp-action="Create" class="btn btn-outline-dark">Create New</a>
+            </div>
+
+            <div class="col col-md-6">
+                <form asp-action="Index" asp-controller="ExpenseTypes" method="post">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input class="form-control" name="searchTxt" placeholder="Search..."/>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-dark"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div> 
+        </div>
 
         <hr />
 
