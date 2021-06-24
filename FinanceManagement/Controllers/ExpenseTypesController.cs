@@ -21,6 +21,15 @@ namespace FinanceManagement.Controllers
             return View(await _context.ExpenseTypes.ToListAsync());
         }
 
+        public async Task<JsonResult> ExpenseTypeExists(string name)
+        {
+            if (await _context.ExpenseTypes.AnyAsync(et => et.Name.ToUpper() == name.ToUpper())){
+                return Json("This type already exists!");
+            }
+
+            return Json(true);
+        }
+
         // GET: ExpenseTypes/Create
         public IActionResult Create()
         {
