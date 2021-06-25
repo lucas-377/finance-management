@@ -11,6 +11,7 @@ namespace FinanceManagement.Models.Entities
         public ExpenseType ExpenseTypes { get; set; } // Associate expense type class.
         [Required(ErrorMessage = "Please enter a value.")]
         [Range(0, double.MaxValue, ErrorMessage = "Invalid value.")] // Dont accept negative values and double overflow value.
+        [DisplayFormat(DataFormatString = "{0:F2}")]
         public double Value { get; set; }
     }
 }

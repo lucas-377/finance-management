@@ -7,7 +7,7 @@
 }
 
 <div class="banner--inner">
-    <img src="https://source.unsplash.com/NeTPASr-bmQ/1920x300" alt="Banner" />
+    <img src="https://source.unsplash.com/MJSFNZ8BAXw/1920x300" alt="Banner" />
     <div class="banner-caption">
         <h5>Expenses</h5>
     </div>
@@ -74,7 +74,7 @@
                             @Html.DisplayFor(modelItem => item.ExpenseTypes.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Value)
+                            R$ @Html.DisplayFor(modelItem => item.Value)
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ExpenseId" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>

@@ -58,7 +58,7 @@ namespace FinanceManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                TempData["Confirmation"] = "Expense was created.";
+                TempData["Confirmation"] = expense.MonthId + " was created."; // How to show name of expense and month ???? *******************************************
                 _context.Add(expense);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
