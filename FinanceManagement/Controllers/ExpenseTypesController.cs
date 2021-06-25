@@ -64,6 +64,25 @@ namespace FinanceManagement.Controllers
             return View(expenseType);
         }
 
+        public JsonResult AddExpenseType (string expenseTxt)
+        {
+            if (!string.IsNullOrEmpty(expenseTxt))
+            {
+                if(!_context.ExpenseTypes.Any(et => et.Name.ToUpper() == expenseTxt))
+                {
+                    ExpenseType expenseType = new ExpenseType();
+
+                    expenseType.Name = expenseTxt;
+
+                    _context.Add(expenseType);
+                    _context.SaveChanges();
+
+                    return Json(true);
+                }
+            }
+            return Json(false);
+        }
+
         // GET: ExpenseTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

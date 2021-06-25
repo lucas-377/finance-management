@@ -24,7 +24,12 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="ExpenseTypeId" class="control-label">Expense Type</label>
-                    <select asp-for="ExpenseTypeId" class="form-control" asp-items="ViewBag.ExpenseTypeId"></select>
+                    <div class="input-group">
+                        <select asp-for="ExpenseTypeId" class="form-control" asp-items="ViewBag.ExpenseTypeId"></select>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-dark" title="Add new" onclick="showCreateModal();"><i class="fas fa-plus-circle"></i></button>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label asp-for="Value" class="control-label"></label>
@@ -42,6 +47,52 @@
     </div>
 </div>
 
+<div class="modal modalCreate" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new expense type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input class="form-control expenseTxt" placeholder="Enter the name of expense" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger btn-add">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function showCreateModal() {
+            $('.modalCreate').modal('show');
+
+            $('.btn-add').on('click', function () {
+                let expenseTxt = $('.expenseTxt').val();
+
+                $.ajax({
+                    url: '/ExpenseTypes/AddExpenseType',
+                    method: 'POST',
+                    data: { expenseTxt: expenseTxt },
+                    success: function (data) {
+                        if (!data) {
+                            $('.modalCreate').modal('hide');
+                            $('.modalCreate').modal('dispose');
+                            $('.btn-add').unbind('click');
+                            expenseTxt = '';
+                            alert('Expense type already exists!');
+                        }
+
+                        location.reload(true);
+                    }
+                });
+            });
+        }
+    </script>
 }

@@ -15,7 +15,7 @@
     <div class="container">
         <div class="row">
             <div class="col col-md-6">
-                <a asp-action="Create" class="btn btn-outline-dark">Create New</a>
+                <a href="javascrip:void(0);" class="btn btn-outline-dark" onclick="showCreateModal();">Create New</a>
             </div>
 
             <div class="col col-md-6">
@@ -64,12 +64,53 @@
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ExpenseTypeId" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
-                            <a href="javascript:void(0);" onclick="showModal(@item.ExpenseTypeId, '@item.Name');" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
+                            <a href="javascript:void(0);" onclick="showDeleteModal(@item.ExpenseTypeId, '@item.Name');" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="modal modalCreate" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new expense type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input class="form-control expenseTxt" placeholder="Enter the name of expense" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger btn-add">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How to put edit in a modal? *******************************************************************-->
+<div class="modal modalEdit" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new expense type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input class="form-control expenseTxt" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger btn-add">Create</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -95,7 +136,57 @@
 
 @section Scripts{ 
     <script>
-        function showModal(id, name) {
+        function showCreateModal() {
+            $('.modalCreate').modal('show');
+
+            $('.btn-add').on('click', function () {
+                let expenseTxt = $('.expenseTxt').val();
+
+                $.ajax({
+                    url: '/ExpenseTypes/AddExpenseType',
+                    method: 'POST',
+                    data: { expenseTxt: expenseTxt },
+                    success: function (data) {
+                        if (!data) {
+                            $('.modalCreate').modal('hide');
+                            $('.modalCreate').modal('dispose');
+                            $('.btn-add').unbind('click');
+                            expenseTxt = '';
+                            alert('Expense type already exists or is empty');
+                        }
+
+                        else location.reload(true);
+                    }
+                });
+            });
+        }
+
+        function showEditModal() {
+            $('.modalEdit').modal('show');
+
+            $('.btn-edit').on('click', function () {
+                let expenseTxt = $('.expenseTxt').val();
+
+                $.ajax({
+                    url: '/ExpenseTypes/AddExpenseType',
+                    method: 'POST',
+                    data: { expenseTxt: expenseTxt },
+                    success: function (data) {
+                        if (!data) {
+                            $('.modalEdit').modal('hide');
+                            $('.modalEdit').modal('dispose');
+                            $('.btn-add').unbind('click');
+                            expenseTxt = '';
+                            alert('Expense type already exists or is empty');
+                        }
+
+                        else location.reload(true);
+                    }
+                });
+            });
+        }
+
+        function showDeleteModal(id, name) {
             $('.item-name').text(name);
             $('.modalDelete').modal('show');
 
