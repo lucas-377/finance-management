@@ -1,13 +1,15 @@
-﻿@model IEnumerable<FinanceManagement.Models.Entities.Salary>
+﻿@model X.PagedList.IPagedList<FinanceManagement.Models.Entities.Expense>
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Expenses";
 }
 
 <div class="banner--inner">
-    <img src="https://source.unsplash.com/AOJGuIJkoBc/1920x300" alt="Banner" />
+    <img src="https://source.unsplash.com/NeTPASr-bmQ/1920x300" alt="Banner" />
     <div class="banner-caption">
-        <h5>Salaries</h5>
+        <h5>Expenses</h5>
     </div>
 </div>
 
@@ -19,10 +21,10 @@
             </div>
 
             <div class="col col-md-6">
-                <form asp-action="Index" asp-controller="Salaries" method="post">
+                <form asp-action="Index" asp-controller="ExpenseTypes" method="post">
                     <div class="form-group">
                         <div class="input-group">
-                            <input class="form-control" name="searchTxt" placeholder="Search by month..." />
+                            <input class="form-control" name="searchTxt" placeholder="Search..." />
                             <div class="input-group-append">
                                 <button class="btn btn-outline-dark"><i class="fas fa-search"></i></button>
                             </div>
@@ -48,10 +50,13 @@
             <thead class="thead-dark">
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Month)
+                        Months
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Value)
+                        Expense Type
+                    </th>
+                    <th>
+                        Value
                     </th>
                     <th>
                         Options
@@ -66,16 +71,25 @@
                             @Html.DisplayFor(modelItem => item.Month.Name)
                         </td>
                         <td>
-                            R$ @Html.DisplayFor(modelItem => item.Value)
+                            @Html.DisplayFor(modelItem => item.ExpenseTypes.Name)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.SalaryId" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
-                            <a href="javascript:void(0);" onclick="showModal(@item.SalaryId);" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ExpenseId" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                            <a href="javascript:void(0);" onclick="showModal(@item.ExpenseId);" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
+
+        @Html.PagedListPager(Model, page => Url.Action("Index", "Expenses", new { page }), new PagedListRenderOptionsBase
+        {
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" }
+        })
     </div>
 </div>
 
@@ -89,7 +103,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete ?</p>
+                <p>Are you sure you want to delete <span class="item-name"></span> ?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
@@ -102,11 +116,12 @@
 @section Scripts{
     <script>
         function showModal(id) {
+            $('.item-name').text(name);
             $('.modalDelete').modal('show');
 
             $('.btn-delete').on('click', function () {
                 $.ajax({
-                    url: 'Salaries/Delete',
+                    url: 'Expenses/Delete',
                     method: 'POST',
                     data: { id: id },
                     success: function (data) {
