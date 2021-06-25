@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -27,6 +25,20 @@ namespace FinanceManagement.Controllers
 
             var context = _context.Expenses.Include(e => e.ExpenseTypes).Include(e => e.Month).OrderBy(e => e.MonthId);
             return View(await context.ToPagedListAsync(pageNumber, pageItems));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(int? page, string searchTxt)
+        {
+            const int pageItems = 10; // Quantity of items per page in pagination.
+            int pageNumber = (page ?? 1); // If page doesnt has a number receive 1 by default.
+
+            if (!string.IsNullOrEmpty(searchTxt))
+            {
+                return View(await _context.Expenses.Include(e => e.ExpenseTypes).Include(e => e.Month).Where(m => m.Month.Name.ToUpper().Contains(searchTxt.ToUpper())).ToPagedListAsync(pageNumber, pageItems));
+            }
+
+            return View(await _context.Expenses.Include(e => e.ExpenseTypes).Include(e => e.Month).ToPagedListAsync(pageNumber, pageItems));
         }
 
         // GET: Expenses/Create
