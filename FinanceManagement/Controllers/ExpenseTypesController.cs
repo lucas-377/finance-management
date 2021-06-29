@@ -8,7 +8,7 @@ namespace FinanceManagement.Controllers
 {
     public class ExpenseTypesController : Controller
     {
-        private readonly Context _context;
+        private Context _context;
 
         public ExpenseTypesController(Context context)
         {
@@ -68,7 +68,7 @@ namespace FinanceManagement.Controllers
         {
             if (!string.IsNullOrEmpty(expenseTxt))
             {
-                if(!_context.ExpenseTypes.Any(et => et.Name.ToUpper() == expenseTxt))
+                if(!_context.ExpenseTypes.Any(et => et.Name.ToUpper() == expenseTxt.ToUpper()))
                 {
                     ExpenseType expenseType = new ExpenseType();
 
@@ -76,6 +76,28 @@ namespace FinanceManagement.Controllers
 
                     _context.Add(expenseType);
                     _context.SaveChanges();
+
+                    return Json(true);
+                }
+            }
+            return Json(false);
+        }
+
+        public async Task<JsonResult> EditExpenseTypeAsync(int? id, string expenseTxt)
+        {
+            var expenseType = await _context.ExpenseTypes.FirstOrDefaultAsync(et => id.HasValue && et.ExpenseTypeId.Equals(id));
+
+            if (!string.IsNullOrEmpty(expenseTxt))
+            {
+                if (!_context.ExpenseTypes.Any(et => et.Name.ToUpper().Equals(expenseTxt.ToUpper()) && !et.ExpenseTypeId.Equals(id)))
+                {
+                    expenseType.Name = expenseTxt;
+
+                    //_context.Update(expenseType);
+                    _context.Set<ExpenseType>().Update(expenseType);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Confirmation"] = expenseType.Name + " was edited.";
 
                     return Json(true);
                 }

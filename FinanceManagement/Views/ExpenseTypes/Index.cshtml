@@ -63,7 +63,7 @@
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.ExpenseTypeId" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                            <a href="javascript:void(0);" onclick="showEditModal(@item.ExpenseTypeId, '@item.Name');" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
                             <a href="javascript:void(0);" onclick="showDeleteModal(@item.ExpenseTypeId, '@item.Name');" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
@@ -83,7 +83,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <input class="form-control expenseTxt" placeholder="Enter the name of expense" />
+                <input class="form-control expenseTxt" placeholder="Enter the type" />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
@@ -93,12 +93,11 @@
     </div>
 </div>
 
-<!-- How to put edit in a modal? *******************************************************************-->
 <div class="modal modalEdit" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add new expense type</h5>
+                <h5 class="modal-title">Edit expense type</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -108,7 +107,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger btn-add">Create</button>
+                <button type="button" class="btn btn-danger btn-edit">Edit</button>
             </div>
         </div>
     </div>
@@ -161,22 +160,26 @@
             });
         }
 
-        function showEditModal() {
+        function showEditModal(id, name) {
             $('.modalEdit').modal('show');
+            $('.modalEdit .expenseTxt').val(name);
 
             $('.btn-edit').on('click', function () {
-                let expenseTxt = $('.expenseTxt').val();
+                let expenseTxt = $('.modalEdit .expenseTxt').val();
 
                 $.ajax({
-                    url: '/ExpenseTypes/AddExpenseType',
+                    url: '/ExpenseTypes/EditExpenseTypeAsync',
                     method: 'POST',
-                    data: { expenseTxt: expenseTxt },
+                    data: {
+                        id: id,
+                        expenseTxt: expenseTxt
+                    },
                     success: function (data) {
                         if (!data) {
                             $('.modalEdit').modal('hide');
                             $('.modalEdit').modal('dispose');
-                            $('.btn-add').unbind('click');
-                            expenseTxt = '';
+                            $('.btn-edit').unbind('click');
+                            $('.expenseTxt').val('');
                             alert('Expense type already exists or is empty');
                         }
 
