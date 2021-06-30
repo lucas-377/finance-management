@@ -70,7 +70,7 @@
                             R$ @Html.DisplayFor(modelItem => item.Value)
                         </td>
                         <td>
-                            <a href="javascript:void(0);" onclick="showEditModal(@item.SalaryId);" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                            <a href="javascript:void(0);" onclick="showEditModal(@item.SalaryId, @item.Month.MonthId, '@item.Month.Name', @item.Value);" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
                             <a href="javascript:void(0);" onclick="showDeleteModal(@item.SalaryId);" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
@@ -107,23 +107,22 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add new salary</h5>
+                <h5 class="modal-title">Edit salary</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="formCreate">
-                    @*<select class="form-control salaryMonth mb-2" asp-items="ViewBag.MonthEdit"></select>*@
+                <form class="formEdit">
                     <select class="form-control salaryMonth mb-2">
-                        <option class="salaryOpt" value=""></option>
+                        <option class="salaryOpt" value="">Selected month</option>
                     </select>
                     <input type="number" class="form-control salaryValue" placeholder="Enter the amount" />
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-danger btn-edit">Create</button>
+                <button type="submit" class="btn btn-danger btn-edit">Edit</button>
             </div>
         </div>
     </div>
@@ -162,7 +161,7 @@
             }).val();
 
             $('.modalCreate .btn-create').on('click', function (e) {
-                
+
                 let salaryValue = $('.modalCreate .salaryValue').val();
 
                 if (salaryValue.length == 0)
@@ -185,26 +184,30 @@
             });
         }
 
-        function showEditModal(id) {
+        function showEditModal(id, monthId, monthName, value) {
             $('.modalEdit').modal('show');
 
-            $('.modalEdit .btn-create').on('click', function (e) {
+            $('.modalEdit .salaryOpt').val(monthId);
+            $('.modalEdit .salaryOpt').text(monthName);
+            $('.modalEdit .salaryValue').val(value)
 
-                let salaryValue = $('.modalEdit .salaryValue').val();
+            let salaryValue = $('.modalEdit .salaryValue').val();
+            salaryValue = parseFloat(salaryValue);
+
+            $('.modalEdit .btn-edit').on('click', function (e) {
 
                 if (salaryValue.length == 0)
                     alert('Please enter a salary value')
 
                 else {
                     $.ajax({
-                        url: '/Salaries/EditSalary',
+                        url: '/Salaries/EditSalaryAsync',
                         method: 'POST',
                         data: {
                             id: id,
                             salaryValue: salaryValue
                         },
                         success: function (data) {
-                            salaryValue = data.salaryValue;
                             $('.modalEdit').modal('hide');
                             location.reload(true);
                         }

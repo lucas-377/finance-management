@@ -78,11 +78,9 @@ namespace FinanceManagement.Controllers
         {
             var salary = await _context.Salaries.FindAsync(id);
 
-            //ViewData["MonthEdit"] = new SelectList(_context.Months.Where(s => s.MonthId == s.Salaries.MonthId), "MonthId", "Name", salary.MonthId);
-
             salary.Month.Salaries.Value = salaryValue;
 
-            _context.Set<Salary>().Update(salary);
+            _context.Update(salary);
             await _context.SaveChangesAsync();
 
             TempData["Confirmation"] = "R$ " + salary.Value + " in " + salary.Month.Name + " was edited.";
