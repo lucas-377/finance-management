@@ -15,7 +15,8 @@
     <div class="container">
         <div class="row">
             <div class="col col-md-6">
-                <a asp-action="Create" class="btn btn-outline-dark">Create New</a>
+                @*<a asp-action="Create" class="btn btn-dark">Create New</a>*@
+                <a href="javascript:void(0);" onclick="showCreateModal();" class="btn btn-dark">Create New</a>
             </div>
 
             <div class="col col-md-6">
@@ -69,13 +70,62 @@
                             R$ @Html.DisplayFor(modelItem => item.Value)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.SalaryId" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
-                            <a href="javascript:void(0);" onclick="showModal(@item.SalaryId);" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
+                            <a href="javascript:void(0);" onclick="showEditModal(@item.SalaryId);" class="btn btn-outline-info btn-sm btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                            <a href="javascript:void(0);" onclick="showDeleteModal(@item.SalaryId);" class="btn btn-outline-danger btn-sm btn-icon" title="Delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="modal modalCreate" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new salary</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="formCreate">
+                    <select class="form-control salaryMonth mb-2" asp-items="ViewBag.MonthId"></select>
+                    <input type="number" class="form-control salaryValue" placeholder="Enter the amount" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger btn-create">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modalEdit" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new salary</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="formCreate">
+                    @*<select class="form-control salaryMonth mb-2" asp-items="ViewBag.MonthEdit"></select>*@
+                    <select class="form-control salaryMonth mb-2">
+                        <option class="salaryOpt" value=""></option>
+                    </select>
+                    <input type="number" class="form-control salaryValue" placeholder="Enter the amount" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger btn-edit">Create</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -101,7 +151,69 @@
 
 @section Scripts{
     <script>
-        function showModal(id) {
+        function showCreateModal() {
+            $('.modalCreate').modal('show');
+
+            let monthId = $('.modalCreate .salaryMonth option:selected').val();
+
+            // Get the id from selected option when changed between options
+            $('.modalCreate .salaryMonth').on('change', function () {
+                monthId = $('.modalCreate .salaryMonth option:selected').val();
+            }).val();
+
+            $('.modalCreate .btn-create').on('click', function (e) {
+                
+                let salaryValue = $('.modalCreate .salaryValue').val();
+
+                if (salaryValue.length == 0)
+                    alert('Please enter a salary value')
+
+                else {
+                    $.ajax({
+                        url: '/Salaries/AddSalary',
+                        method: 'POST',
+                        data: {
+                            monthId: monthId,
+                            salaryValue: salaryValue
+                        },
+                        success: function (data) {
+                            $('.modalCreate').modal('hide');
+                            location.reload(true);
+                        }
+                    });
+                }
+            });
+        }
+
+        function showEditModal(id) {
+            $('.modalEdit').modal('show');
+
+            $('.modalEdit .btn-create').on('click', function (e) {
+
+                let salaryValue = $('.modalEdit .salaryValue').val();
+
+                if (salaryValue.length == 0)
+                    alert('Please enter a salary value')
+
+                else {
+                    $.ajax({
+                        url: '/Salaries/EditSalary',
+                        method: 'POST',
+                        data: {
+                            id: id,
+                            salaryValue: salaryValue
+                        },
+                        success: function (data) {
+                            salaryValue = data.salaryValue;
+                            $('.modalEdit').modal('hide');
+                            location.reload(true);
+                        }
+                    });
+                }
+            });
+        }
+
+        function showDeleteModal(id) {
             $('.modalDelete').modal('show');
 
             $('.btn-delete').on('click', function () {

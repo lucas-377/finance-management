@@ -20,6 +20,9 @@ namespace FinanceManagement.Controllers
         public async Task<IActionResult> Index()
         {
             var context = _context.Salaries.Include(s => s.Month);
+
+            ViewData["MonthId"] = new SelectList(_context.Months.Where(s => s.MonthId != s.Salaries.MonthId), "MonthId", "Name"); // Send months without salary to view
+
             return View(await context.ToListAsync());
         }
 
@@ -32,6 +35,19 @@ namespace FinanceManagement.Controllers
             }
 
             return View(await _context.Salaries.Include(s => s.Month).ToListAsync());
+        }
+
+        public JsonResult AddSalary(int monthId, double salaryValue)
+        {
+            Salary salary = new Salary();
+
+            salary.MonthId = monthId;
+            salary.Value = salaryValue;
+
+            _context.Add(salary);
+            _context.SaveChanges();
+
+            return Json(true);
         }
 
         // GET: Salaries/Create
@@ -56,6 +72,22 @@ namespace FinanceManagement.Controllers
             }
             ViewData["MonthId"] = new SelectList(_context.Months.Where(s => s.MonthId != s.Salaries.MonthId), "MonthId", "Name", salary.MonthId);
             return View(salary);
+        }
+
+        public async Task<JsonResult> EditSalaryAsync(int? id, double salaryValue)
+        {
+            var salary = await _context.Salaries.FindAsync(id);
+
+            //ViewData["MonthEdit"] = new SelectList(_context.Months.Where(s => s.MonthId == s.Salaries.MonthId), "MonthId", "Name", salary.MonthId);
+
+            salary.Month.Salaries.Value = salaryValue;
+
+            _context.Set<Salary>().Update(salary);
+            await _context.SaveChangesAsync();
+
+            TempData["Confirmation"] = "R$ " + salary.Value + " in " + salary.Month.Name + " was edited.";
+
+            return Json(true);
         }
 
         // GET: Salaries/Edit/5

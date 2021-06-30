@@ -1,0 +1,15 @@
+Projeto - Finance Management
+==============================
+
+CRUD com modais, todas as telas:
+
+OK - Expense Types
+! - Salaries (Editar)
+! - Expenses (Criar, Editar)
+
+HOME com dashboard de gráficos:
+
+ViewComponents
+! - Gasto Total
+! - Gasto Total Mes
+! - Estatisticas
