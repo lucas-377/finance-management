@@ -47,6 +47,8 @@ namespace FinanceManagement.Controllers
             _context.Add(salary);
             _context.SaveChanges();
 
+            TempData["Confirmation"] = "R$ " + salary.Value + " in " + _context.Months.Where(m => m.MonthId == salary.MonthId).FirstOrDefault().Name + " was created.";
+
             return Json(true);
         }
 
@@ -143,12 +145,21 @@ namespace FinanceManagement.Controllers
 
         // POST: Salaries/Delete/5
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        //public async Task<IActionResult> Delete(int id)
+        //{
+        //    var salary = await _context.Salaries.FindAsync(id);
+        //    _context.Salaries.Remove(salary);
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+        public async Task<JsonResult> Delete(int id)
         {
             var salary = await _context.Salaries.FindAsync(id);
+            TempData["Confirmation"] = _context.Months.Where(m => m.MonthId == salary.MonthId).FirstOrDefault().Name + " was deleted.";
             _context.Salaries.Remove(salary);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Json(_context.Months.Where(m => m.MonthId == salary.MonthId).FirstOrDefault().Name + "deleted!");
         }
 
         private bool SalaryExists(int id)

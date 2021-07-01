@@ -220,7 +220,7 @@
 
             $('.btn-delete').on('click', function () {
                 $.ajax({
-                    url: 'Salaries/Delete',
+                    url: '/Salaries/Delete',
                     method: 'POST',
                     data: { id: id },
                     success: function () {
