@@ -187,16 +187,15 @@
         function showEditModal(id, monthId, monthName, value) {
             $('.modalEdit').modal('show');
 
+            let salaryValue = $('.modalEdit .salaryValue');
+
             $('.modalEdit .salaryOpt').val(monthId);
             $('.modalEdit .salaryOpt').text(monthName);
-            $('.modalEdit .salaryValue').val(value)
+            salaryValue.val(value);
 
-            let salaryValue = $('.modalEdit .salaryValue').val();
-            salaryValue = parseFloat(salaryValue);
+            $('.modalEdit .btn-edit').on('click', function () {
 
-            $('.modalEdit .btn-edit').on('click', function (e) {
-
-                if (salaryValue.length == 0)
+                if (salaryValue.val().length == 0)
                     alert('Please enter a salary value')
 
                 else {
@@ -205,9 +204,9 @@
                         method: 'POST',
                         data: {
                             id: id,
-                            salaryValue: salaryValue
+                            salaryValue: salaryValue.val()
                         },
-                        success: function (data) {
+                        success: function () {
                             $('.modalEdit').modal('hide');
                             location.reload(true);
                         }
@@ -224,7 +223,7 @@
                     url: 'Salaries/Delete',
                     method: 'POST',
                     data: { id: id },
-                    success: function (data) {
+                    success: function () {
                         $('.modalDelete').modal('hide');
                         location.reload(true);
                     }

@@ -74,16 +74,16 @@ namespace FinanceManagement.Controllers
             return View(salary);
         }
 
-        public async Task<JsonResult> EditSalaryAsync(int? id, double salaryValue)
+        public async Task<JsonResult> EditSalaryAsync(int id, double salaryValue)
         {
             var salary = await _context.Salaries.FindAsync(id);
 
-            salary.Month.Salaries.Value = salaryValue;
+            salary.Value = salaryValue;
 
             _context.Update(salary);
             await _context.SaveChangesAsync();
 
-            TempData["Confirmation"] = "R$ " + salary.Value + " in " + salary.Month.Name + " was edited.";
+            TempData["Confirmation"] = "R$ " + _context.Salaries.Find(id).Value + " in " + _context.Months.Where(m => m.MonthId == salary.MonthId).FirstOrDefault().Name + " was edited.";
 
             return Json(true);
         }
