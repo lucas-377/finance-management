@@ -24,6 +24,10 @@ namespace FinanceManagement.Controllers
             int pageNumber = (page ?? 1); // If page doesnt has a number receive 1 by default.
 
             var context = _context.Expenses.Include(e => e.ExpenseTypes).Include(e => e.Month).OrderBy(e => e.MonthId);
+
+            ViewData["MonthId"] = new SelectList(_context.Months, "MonthId", "Name");
+            ViewData["TypeId"] = new SelectList(_context.ExpenseTypes, "ExpenseTypeId", "Name");
+
             return View(await context.ToPagedListAsync(pageNumber, pageItems));
         }
 
@@ -41,97 +45,45 @@ namespace FinanceManagement.Controllers
             return View(await _context.Expenses.Include(e => e.ExpenseTypes).Include(e => e.Month).ToPagedListAsync(pageNumber, pageItems));
         }
 
-        // GET: Expenses/Create
-        public IActionResult Create()
+        public JsonResult AddExpense(int monthId, int expenseId, double expenseValue)
         {
-            ViewData["ExpenseTypeId"] = new SelectList(_context.ExpenseTypes, "ExpenseTypeId", "Name");
-            ViewData["MonthId"] = new SelectList(_context.Months, "MonthId", "Name");
-            return View();
+            Expense expense = new Expense();
+
+            expense.MonthId = monthId;
+            expense.ExpenseTypeId = expenseId;
+            expense.Value = expenseValue;
+
+            _context.Add(expense);
+            _context.SaveChanges();
+
+            TempData["Confirmation"] = "R$ " + expense.Value + " of " + _context.ExpenseTypes.Where(et => et.ExpenseTypeId == expense.ExpenseTypeId).FirstOrDefault().Name + " in " + _context.Months.Where(m => m.MonthId == expense.MonthId).FirstOrDefault().Name + " was created.";
+
+            return Json(true);
         }
 
-        // POST: Expenses/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ExpenseId,MonthId,ExpenseTypeId,Value")] Expense expense)
+        public JsonResult EditExpense(int id, int monthId, int expenseId, double expenseValue)
         {
-            if (ModelState.IsValid)
-            {
-                TempData["Confirmation"] = _context.ExpenseTypes.Find(expense.ExpenseTypeId).Name + " in " + _context.Months.Find(expense.MonthId).Name + " was created.";
-                _context.Add(expense);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ExpenseTypeId"] = new SelectList(_context.ExpenseTypes, "ExpenseTypeId", "Name", expense.ExpenseTypeId);
-            ViewData["MonthId"] = new SelectList(_context.Months, "MonthId", "Name", expense.MonthId);
-            return View(expense);
+            var expense = _context.Expenses.Find(id);
+
+            expense.MonthId = monthId;
+            expense.ExpenseTypeId = expenseId;
+            expense.Value = expenseValue;
+
+            _context.Update(expense);
+            _context.SaveChanges();
+
+            TempData["Confirmation"] = "R$ " + expense.Value + " of " + _context.ExpenseTypes.Where(et => et.ExpenseTypeId == expense.ExpenseTypeId).FirstOrDefault().Name + " in " + _context.Months.Where(m => m.MonthId == expense.MonthId).FirstOrDefault().Name + " was edited.";
+
+            return Json(true);
         }
 
-        // GET: Expenses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var expense = await _context.Expenses.FindAsync(id);
-            if (expense == null)
-            {
-                return NotFound();
-            }
-            ViewData["ExpenseTypeId"] = new SelectList(_context.ExpenseTypes, "ExpenseTypeId", "Name", expense.ExpenseTypeId);
-            ViewData["MonthId"] = new SelectList(_context.Months, "MonthId", "Name", expense.MonthId);
-            return View(expense);
-        }
-
-        // POST: Expenses/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ExpenseId,MonthId,ExpenseTypeId,Value")] Expense expense)
-        {
-            if (id != expense.ExpenseId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    TempData["Confirmation"] = "Expense was updated.";
-                    _context.Update(expense);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ExpenseExists(expense.ExpenseId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ExpenseTypeId"] = new SelectList(_context.ExpenseTypes, "ExpenseTypeId", "Name", expense.ExpenseTypeId);
-            ViewData["MonthId"] = new SelectList(_context.Months, "MonthId", "Name", expense.MonthId);
-            return View(expense);
-        }
-
-        // POST: Expenses/Delete/5
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<JsonResult> Delete(int id)
         {
             var expense = await _context.Expenses.FindAsync(id);
+            TempData["Confirmation"] = "R$ " + expense.Value + " of " + _context.ExpenseTypes.Where(et => et.ExpenseTypeId == expense.ExpenseTypeId).FirstOrDefault().Name + " in " + _context.Months.Where(m => m.MonthId == expense.MonthId).FirstOrDefault().Name + " was deleted.";
             _context.Expenses.Remove(expense);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Json("deleted!");
         }
 
         private bool ExpenseExists(int id)

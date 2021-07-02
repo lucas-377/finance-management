@@ -4,8 +4,10 @@ Projeto - Finance Management
 CRUD com modais, todas as telas:
 
 OK - Expense Types
-! - Salaries (Editar)
-! - Expenses (Criar, Editar)
+OK - Salaries
+OK - Expenses
+
+==============================
 
 HOME com dashboard de gráficos:
 

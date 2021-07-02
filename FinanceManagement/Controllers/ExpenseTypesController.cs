@@ -41,29 +41,6 @@ namespace FinanceManagement.Controllers
             return Json(true);
         }
 
-        // GET: ExpenseTypes/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ExpenseTypes/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ExpenseTypeId,Name")] ExpenseType expenseType)
-        {
-            if (ModelState.IsValid)
-            {
-                TempData["Confirmation"] = expenseType.Name + " was created.";
-                _context.Add(expenseType);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(expenseType);
-        }
-
         public JsonResult AddExpenseType (string expenseTxt)
         {
             if (!string.IsNullOrEmpty(expenseTxt))
@@ -76,6 +53,8 @@ namespace FinanceManagement.Controllers
 
                     _context.Add(expenseType);
                     _context.SaveChanges();
+
+                    TempData["Confirmation"] = expenseType.Name + " was created.";
 
                     return Json(true);
                 }
@@ -103,58 +82,6 @@ namespace FinanceManagement.Controllers
                 }
             }
             return Json(false);
-        }
-
-        // GET: ExpenseTypes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var expenseType = await _context.ExpenseTypes.FindAsync(id);
-            if (expenseType == null)
-            {
-                return NotFound();
-            }
-            return View(expenseType);
-        }
-
-        // POST: ExpenseTypes/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ExpenseTypeId,Name")] ExpenseType expenseType)
-        {
-            if (id != expenseType.ExpenseTypeId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    TempData["Confirmation"] = expenseType.Name + " was edited.";
-                    _context.Update(expenseType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ExpenseTypeExists(expenseType.ExpenseTypeId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(expenseType);
         }
 
         // POST: ExpenseTypes/Delete/5

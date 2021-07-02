@@ -102,3 +102,8 @@ footer {margin-top: auto;}
     background-color: #3f454a;
     border-color: #212529;
 }
+
+/* Forms */
+.input-group-append {
+    align-items: flex-start;
+}
