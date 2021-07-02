@@ -28,3 +28,26 @@
         <span class="sr-only">Next</span>
     </a>
 </div>
+
+<div class="container">
+    <div class="row justify-content-center mt-5 mb-4">
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label"><strong>Month</strong></label>
+            <div class="col-sm-9">
+                <select class="form-control monthChoice" asp-items="ViewBag.Months"></select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col d-flex">
+            <partial name="_MonthExpenses" />
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        loadData();
+    </script>
+}

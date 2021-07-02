@@ -1,17 +1,24 @@
 ﻿using FinanceManagement.Models;
+using FinanceManagement.Models.Entities;
+using FinanceManagement.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace FinanceManagement.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly Context _context;
+
+        public HomeController(Context context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
+            ViewData["Months"] = new SelectList(_context.Months.Where(x => x.MonthId == x.Salaries.MonthId), "MonthId", "Name");
             return View();
         }
 

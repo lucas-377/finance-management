@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FinanceManagement.Models.Entities;
 using X.PagedList;
+using FinanceManagement.Models.ViewModels;
 
 namespace FinanceManagement.Controllers
 {
@@ -89,6 +90,16 @@ namespace FinanceManagement.Controllers
         private bool ExpenseExists(int id)
         {
             return _context.Expenses.Any(e => e.ExpenseId == id);
+        }
+
+        public JsonResult MonthExpenses(int monthId)
+        {
+            TotalMonthExpensesViewModel expenses = new TotalMonthExpensesViewModel();
+
+            expenses.TotalValue = _context.Expenses.Where(e => e.Month.MonthId == monthId).Sum(e => e.Value);
+            expenses.Salary = _context.Salaries.Where(s => s.Month.MonthId == monthId).Select(s => s.Value).FirstOrDefault();
+
+            return Json(expenses);
         }
     }
 }

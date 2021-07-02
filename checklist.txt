@@ -13,5 +13,5 @@ HOME com dashboard de gráficos:
 
 ViewComponents
 ! - Gasto Total
-! - Gasto Total Mes
+OK - Gasto Total Mes
 ! - Estatisticas
