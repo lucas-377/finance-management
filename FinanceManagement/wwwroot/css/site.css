@@ -22,6 +22,11 @@ footer {margin-top: auto;}
     text-shadow: 1px 3px 20px #000000ab;
 }
 
+#homeCarousel .carousel-item img {
+    min-height: 350px;
+    object-fit: cover;
+}
+
 #homeCarousel .carousel-caption h5 {
     font-size: 60px;
 }

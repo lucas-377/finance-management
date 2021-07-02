@@ -40,14 +40,18 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col d-flex">
+        <div class="col">
             <partial name="_MonthExpenses" />
+        </div>
+        <div class="col">
+            <partial name="_MonthTypes" />
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        loadData();
+        loadMonthData();
+        loadTypeData();
     </script>
 }

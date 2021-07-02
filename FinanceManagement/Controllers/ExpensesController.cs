@@ -101,5 +101,19 @@ namespace FinanceManagement.Controllers
 
             return Json(expenses);
         }
+
+        public JsonResult MonthTypes(int monthId)
+        {
+            var query = from expenses in _context.Expenses
+                        where expenses.Month.MonthId == monthId
+                        group expenses by expenses.ExpenseTypes.Name into g
+                        select new
+                        {
+                            ExpenseTypes = g.Key,
+                            Values = g.Sum(e => e.Value)
+                        };
+
+            return Json(query);
+        }
     }
 }
